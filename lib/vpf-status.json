@@ -1,0 +1,292 @@
+{
+  "ES7631400001970015803200": {
+    "banco": "Caixa Guissona",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES6000810093430001278232": {
+    "banco": "Sabadell",
+    "accesoBanco": "Sí",
+    "estadoVPF": "No iniciado"
+  },
+  "ES5931400001960015821500": {
+    "banco": "Caixa Guissona",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES3900810664960001357946": {
+    "banco": "Sabadell",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES9500810664930001374448": {
+    "banco": "Sabadell",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES8200810134910002420847": {
+    "banco": "Sabadell",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES4067190001638150522954": {
+    "banco": "UNIBO",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES3631400001900016048800": {
+    "banco": "Caixa Guissona",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES5700810134910001804183": {
+    "banco": "Sabadell",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES6731400001900016214500": {
+    "banco": "Caixa Guissona",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES1200810109170001309640": {
+    "banco": "Sabadell",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Pendiente"
+  },
+  "ES1301829780900200200121": {
+    "banco": "BBVA",
+    "accesoBanco": "Sí",
+    "estadoVPF": "No iniciado"
+  },
+  "ES9467248440056121491318": {
+    "banco": "BBVA",
+    "accesoBanco": "Sí",
+    "estadoVPF": "No iniciado"
+  },
+  "ES3930580546912720305730": {
+    "banco": "Cajamar",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES3321002125040200726411": {
+    "banco": "Cajamar",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES3100810133450001999500": {
+    "banco": "Sabadell",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES8000810109180001315836": {
+    "banco": "Sabadell",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES2767248440038975392963": {
+    "banco": "Sabadell",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES1530580546902720307569": {
+    "banco": "Cajamar",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES7921002125050200727183": {
+    "banco": "Cajamar",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES0330580546992810318785": {
+    "banco": "Cajamar",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES6900810109180001293530": {
+    "banco": "Sabadell",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES0230580546932720311827": {
+    "banco": "Cajamar",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES2467248440052368286710": {
+    "banco": "zer0",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES5430580546972720305457": {
+    "banco": "zer0",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES4701828151870201711274": {
+    "banco": "BBVA",
+    "accesoBanco": "Sí",
+    "estadoVPF": "No iniciado"
+  },
+  "ES8430580546992810312671": {
+    "banco": "Cajamar",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES1321002125060200726285": {
+    "banco": "Cajamar",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES2730580546992720300704": {
+    "banco": "Cajamar",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES8830580546902720306740": {
+    "banco": "Cajamar",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES3101828674410201526355": {
+    "banco": "BBVA",
+    "accesoBanco": "Sí",
+    "estadoVPF": "No iniciado"
+  },
+  "ES6400810052050002697981": {
+    "banco": "Sabadell",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES5230580546912810322272": {
+    "banco": "Cajamar",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES5400810109180001328138": {
+    "banco": "Sabadell",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES0301821507000200116386": {
+    "banco": "BBVA",
+    "accesoBanco": "Sí",
+    "estadoVPF": "No iniciado"
+  },
+  "ES6930580546902810322500": {
+    "banco": "Cajamar",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES4067248440096103372203": {
+    "banco": "zer0",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES5801829791020208022437": {
+    "banco": "zer0",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES9330580546902810322456": {
+    "banco": "Cajamar",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES2930580546912810323268": {
+    "banco": "Cajamar",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES6801821253880201587237": {
+    "banco": "BBVA",
+    "accesoBanco": "Sí",
+    "estadoVPF": "No iniciado"
+  },
+  "ES6267248440098420265210": {
+    "banco": "zer0",
+    "accesoBanco": "Sí",
+    "estadoVPF": "No iniciado"
+  },
+  "ES7500810004380001699272": {
+    "banco": "zer0",
+    "accesoBanco": "Sí",
+    "estadoVPF": "No iniciado"
+  },
+  "ES1000810109130001288629": {
+    "banco": "Sabadell",
+    "accesoBanco": "Sí",
+    "estadoVPF": "En trámite"
+  },
+  "ES6367248440057977125253": {
+    "banco": "zer0",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES9200810344310001283639": {
+    "banco": "zer0",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES3900810109110001303531": {
+    "banco": "Sabadell",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES0900810109190001314640": {
+    "banco": "Sabadell",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES6200810133420001689271": {
+    "banco": "Sabadell",
+    "accesoBanco": "Sí",
+    "estadoVPF": "En trámite"
+  },
+  "ES0367248440038565600793": {
+    "banco": "Sabadell",
+    "accesoBanco": "Sí",
+    "estadoVPF": "En trámite"
+  },
+  "ES7400810344340001283331": {
+    "banco": "Sabadell",
+    "accesoBanco": "Sí",
+    "estadoVPF": "En trámite"
+  },
+  "ES1167248440002485109915": {
+    "banco": "Sabadell",
+    "accesoBanco": "Sí",
+    "estadoVPF": "En trámite"
+  },
+  "ES1100810109140001202523": {
+    "banco": "Sabadell",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES4900810109140001324641": {
+    "banco": "Sabadell",
+    "accesoBanco": "Sí",
+    "estadoVPF": "En trámite"
+  },
+  "ES7000810026760001832685": {
+    "banco": "Sabadell",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES6500810109160001331142": {
+    "banco": "Sabadell",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES6200810347770001280029": {
+    "banco": "Sabadell",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  },
+  "ES8300810026790001507257": {
+    "banco": "Sabadell",
+    "accesoBanco": "Sí",
+    "estadoVPF": "Completado"
+  }
+}

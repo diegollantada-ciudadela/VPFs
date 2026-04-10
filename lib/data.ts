@@ -1,16 +1,37 @@
 import {
   Administrador,
   CiudadelaRawAdmin,
+  AccesoBanco,
+  EstadoVPF,
 } from "./types";
 import ciudadelaData from "./ciudadela-data.json";
-import { readVpfExcel } from "./read-excel";
+import vpfStatusData from "./vpf-status.json";
 
 // Datos reales extraídos de Ciudadela (snapshot semanal)
 const rawAdmins = ciudadelaData as CiudadelaRawAdmin[];
 
-// Leer datos del Excel del Google Sheet (carpeta data/)
-// Columnas: G=Banco, H=IBAN, J=Acceso Banco, K=Estado VPF
-const vpfData = readVpfExcel();
+// Datos del Google Sheet (Banco, Acceso Banco, Estado VPF por IBAN)
+const vpfData = vpfStatusData as Record<
+  string,
+  { banco: string; accesoBanco: string; estadoVPF: string }
+>;
+
+function getVpfStatus(iban: string): {
+  banco: string | null;
+  accesoBanco: AccesoBanco;
+  estadoVPF: EstadoVPF;
+} {
+  const clean = iban.replace(/\s/g, "");
+  const entry = vpfData[clean];
+  if (entry) {
+    return {
+      banco: entry.banco || null,
+      accesoBanco: (entry.accesoBanco as AccesoBanco) || "Pendiente",
+      estadoVPF: (entry.estadoVPF as EstadoVPF) || "No iniciado",
+    };
+  }
+  return { banco: null, accesoBanco: "Pendiente", estadoVPF: "No iniciado" };
+}
 
 function transformAdmin(raw: CiudadelaRawAdmin): Administrador {
   return {
@@ -21,13 +42,12 @@ function transformAdmin(raw: CiudadelaRawAdmin): Administrador {
       cif: c.cif,
       direccion: c.direccion,
       cuentas: c.cuentas.map((ct) => {
-        const cleanIban = ct.iban.replace(/\s/g, "");
-        const vpf = vpfData.get(cleanIban);
+        const vpf = getVpfStatus(ct.iban);
         return {
           iban: ct.iban,
-          banco: vpf?.banco || ct.banco,
-          accesoBanco: vpf?.accesoBanco ?? "Pendiente",
-          estadoVPF: vpf?.estadoVPF ?? "No iniciado",
+          banco: vpf.banco || ct.banco,
+          accesoBanco: vpf.accesoBanco,
+          estadoVPF: vpf.estadoVPF,
         };
       }),
     })),
