@@ -12,13 +12,30 @@ export interface Comunidad {
   nombre: string;
   cif: string;
   direccion: string;
-  activa: boolean;
   cuentas: CuentaBancaria[];
 }
 
 export interface Administrador {
-  id: string;
+  id: number;
   nombre: string;
-  email: string;
   comunidades: Comunidad[];
+}
+
+// Estructura raw del JSON de Ciudadela
+export interface CiudadelaRawCuenta {
+  iban: string;
+  banco: string;
+}
+
+export interface CiudadelaRawComunidad {
+  nombre: string;
+  cif: string;
+  direccion: string;
+  cuentas: CiudadelaRawCuenta[];
+}
+
+export interface CiudadelaRawAdmin {
+  id: number;
+  nombre: string;
+  comunidades: CiudadelaRawComunidad[];
 }

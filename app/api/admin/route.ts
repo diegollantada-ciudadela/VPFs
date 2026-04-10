@@ -1,17 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAdministradorByEmail } from "@/lib/data";
+import { getAdministradorById, searchAdministradores } from "@/lib/data";
 
 export async function GET(request: NextRequest) {
-  const email = request.nextUrl.searchParams.get("email");
+  const id = request.nextUrl.searchParams.get("id");
+  const search = request.nextUrl.searchParams.get("search");
 
-  if (!email) {
+  // Search admins by name
+  if (search !== null) {
+    const results = searchAdministradores(search);
+    return NextResponse.json(results);
+  }
+
+  // Get admin by ID
+  if (!id) {
     return NextResponse.json(
-      { error: "Email requerido" },
+      { error: "Parámetro 'id' o 'search' requerido" },
       { status: 400 }
     );
   }
 
-  const admin = getAdministradorByEmail(email);
+  const admin = getAdministradorById(Number(id));
 
   if (!admin) {
     return NextResponse.json(

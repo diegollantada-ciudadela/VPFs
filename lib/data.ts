@@ -1,176 +1,72 @@
-import { Administrador } from "./types";
+import {
+  Administrador,
+  CiudadelaRawAdmin,
+  AccesoBanco,
+  EstadoVPF,
+} from "./types";
+import ciudadelaData from "./ciudadela-data.json";
 
-// Datos de ejemplo - En producción se obtendrán del MCP de Ciudadela y Google Sheets
-export const administradores: Administrador[] = [
-  {
-    id: "admin-001",
-    nombre: "María García López",
-    email: "maria.garcia@fincasgarcia.es",
-    comunidades: [
-      {
-        nombre: "Comunidad Residencial Las Palmeras",
-        cif: "H-12345678",
-        direccion: "C/ Las Palmeras 12, 28001 Madrid",
-        activa: true,
-        cuentas: [
-          {
-            iban: "ES91 2100 0418 4502 0005 1332",
-            banco: "CaixaBank",
-            accesoBanco: "Sí",
-            estadoVPF: "Completado",
-          },
-        ],
-      },
-      {
-        nombre: "Comunidad Edificio Sol",
-        cif: "H-23456789",
-        direccion: "Av. del Sol 45, 28002 Madrid",
-        activa: true,
-        cuentas: [
-          {
-            iban: "ES68 0049 1500 0512 3456 7890",
-            banco: "Santander",
-            accesoBanco: "Sí",
-            estadoVPF: "En trámite",
-          },
-          {
-            iban: "ES21 0182 2370 4200 1566 3456",
-            banco: "BBVA",
-            accesoBanco: "Pendiente",
-            estadoVPF: "Pendiente",
-          },
-        ],
-      },
-      {
-        nombre: "Comunidad Plaza Mayor 8",
-        cif: "H-34567890",
-        direccion: "Plaza Mayor 8, 28003 Madrid",
-        activa: true,
-        cuentas: [
-          {
-            iban: "ES55 0075 0001 0906 0012 3456",
-            banco: "Banco Popular",
-            accesoBanco: "No",
-            estadoVPF: "No iniciado",
-          },
-        ],
-      },
-      {
-        nombre: "Comunidad Jardines del Norte",
-        cif: "H-45678901",
-        direccion: "C/ Jardines 3, 28004 Madrid",
-        activa: true,
-        cuentas: [
-          {
-            iban: "ES12 2038 1000 9000 0076 0236",
-            banco: "Bankia",
-            accesoBanco: "Sí",
-            estadoVPF: "Rechazado",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: "admin-002",
-    nombre: "Carlos Rodríguez Martín",
-    email: "carlos@adminrodriguez.com",
-    comunidades: [
-      {
-        nombre: "Residencial Puerta de Hierro",
-        cif: "H-56789012",
-        direccion: "C/ Puerta de Hierro 22, 28035 Madrid",
-        activa: true,
-        cuentas: [
-          {
-            iban: "ES80 2310 0001 1800 0012 3456",
-            banco: "ING",
-            accesoBanco: "Sí",
-            estadoVPF: "Completado",
-          },
-        ],
-      },
-      {
-        nombre: "Comunidad Torre Picasso",
-        cif: "H-67890123",
-        direccion: "Av. AZCA 1, 28020 Madrid",
-        activa: true,
-        cuentas: [
-          {
-            iban: "ES15 0049 2648 7123 4567 8901",
-            banco: "Santander",
-            accesoBanco: "No",
-            estadoVPF: "No iniciado",
-          },
-          {
-            iban: "ES33 2100 5731 0721 0015 8276",
-            banco: "CaixaBank",
-            accesoBanco: "Sí",
-            estadoVPF: "En trámite",
-          },
-        ],
-      },
-      {
-        nombre: "Comunidad Parque Retiro",
-        cif: "H-78901234",
-        direccion: "C/ Retiro 15, 28009 Madrid",
-        activa: true,
-        cuentas: [
-          {
-            iban: "ES44 0182 5678 9012 3456 7890",
-            banco: "BBVA",
-            accesoBanco: "Sí",
-            estadoVPF: "Completado",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: "admin-003",
-    nombre: "Ana Fernández Ruiz",
-    email: "ana@gestionfernandez.es",
-    comunidades: [
-      {
-        nombre: "Comunidad Villa Rosa",
-        cif: "H-89012345",
-        direccion: "C/ Rosa 7, 28006 Madrid",
-        activa: true,
-        cuentas: [
-          {
-            iban: "ES77 0128 0001 5900 0123 4567",
-            banco: "Bankinter",
-            accesoBanco: "Sí",
-            estadoVPF: "Pendiente",
-          },
-        ],
-      },
-      {
-        nombre: "Residencial Moncloa",
-        cif: "H-90123456",
-        direccion: "Av. Moncloa 34, 28008 Madrid",
-        activa: true,
-        cuentas: [
-          {
-            iban: "ES09 0049 6785 4321 0987 6543",
-            banco: "Santander",
-            accesoBanco: "Sí",
-            estadoVPF: "Completado",
-          },
-          {
-            iban: "ES62 2100 9876 5432 1098 7654",
-            banco: "CaixaBank",
-            accesoBanco: "Pendiente",
-            estadoVPF: "En trámite",
-          },
-        ],
-      },
-    ],
-  },
-];
+// Datos reales extraídos de Ciudadela (snapshot)
+// TODO: Reemplazar con llamadas a la API GraphQL de Ciudadela cuando se configure
+const rawAdmins = ciudadelaData as CiudadelaRawAdmin[];
 
-export function getAdministradorByEmail(email: string): Administrador | undefined {
-  return administradores.find(
-    (admin) => admin.email.toLowerCase() === email.toLowerCase()
-  );
+// Datos de VPF del Google Sheet (mock por ahora - el sheet es privado)
+// TODO: Conectar con Google Sheets API para obtener estado real
+// Columnas: G=Banco, H=IBAN, J=Acceso Banco, K=Estado VPF
+const vpfStatusByIban: Record<
+  string,
+  { accesoBanco: AccesoBanco; estadoVPF: EstadoVPF }
+> = {};
+
+function getVpfStatus(iban: string): {
+  accesoBanco: AccesoBanco;
+  estadoVPF: EstadoVPF;
+} {
+  // Si tenemos datos del Google Sheet, usarlos
+  const clean = iban.replace(/\s/g, "");
+  if (vpfStatusByIban[clean]) {
+    return vpfStatusByIban[clean];
+  }
+  // Default: No iniciado
+  return { accesoBanco: "Pendiente", estadoVPF: "No iniciado" };
+}
+
+function transformAdmin(raw: CiudadelaRawAdmin): Administrador {
+  return {
+    id: raw.id,
+    nombre: raw.nombre,
+    comunidades: raw.comunidades.map((c) => ({
+      nombre: c.nombre,
+      cif: c.cif,
+      direccion: c.direccion,
+      cuentas: c.cuentas.map((ct) => {
+        const status = getVpfStatus(ct.iban);
+        return {
+          iban: ct.iban,
+          banco: ct.banco,
+          accesoBanco: status.accesoBanco,
+          estadoVPF: status.estadoVPF,
+        };
+      }),
+    })),
+  };
+}
+
+export function getAdminList(): { id: number; nombre: string }[] {
+  return rawAdmins.map((a) => ({ id: a.id, nombre: a.nombre }));
+}
+
+export function getAdministradorById(id: number): Administrador | undefined {
+  const raw = rawAdmins.find((a) => a.id === id);
+  if (!raw) return undefined;
+  return transformAdmin(raw);
+}
+
+export function searchAdministradores(
+  query: string
+): { id: number; nombre: string }[] {
+  const q = query.toLowerCase();
+  return rawAdmins
+    .filter((a) => a.nombre.toLowerCase().includes(q))
+    .map((a) => ({ id: a.id, nombre: a.nombre }));
 }

@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Administrador, CuentaBancaria, EstadoVPF } from "@/lib/types";
+import { Administrador, CuentaBancaria, EstadoVPF, Comunidad } from "@/lib/types";
 
 function estadoColor(estado: EstadoVPF) {
   switch (estado) {
@@ -249,17 +249,17 @@ export default function DashboardPageWrapper() {
 function DashboardPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const email = searchParams.get("email");
+  const adminId = searchParams.get("id");
   const [admin, setAdmin] = useState<Administrador | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!email) {
+    if (!adminId) {
       router.push("/");
       return;
     }
 
-    fetch(`/api/admin?email=${encodeURIComponent(email)}`)
+    fetch(`/api/admin?id=${encodeURIComponent(adminId)}`)
       .then((res) => {
         if (!res.ok) throw new Error("Not found");
         return res.json();
@@ -267,7 +267,7 @@ function DashboardPage() {
       .then(setAdmin)
       .catch(() => router.push("/"))
       .finally(() => setLoading(false));
-  }, [email, router]);
+  }, [adminId, router]);
 
   if (loading) {
     return (
@@ -385,9 +385,7 @@ function DashboardPage() {
 
         {/* Communities */}
         <div className="space-y-6">
-          {admin.comunidades
-            .filter((c) => c.activa)
-            .map((comunidad) => (
+          {admin.comunidades.map((comunidad) => (
               <div
                 key={comunidad.cif}
                 className="bg-white rounded-xl border border-[var(--border)] overflow-hidden"
