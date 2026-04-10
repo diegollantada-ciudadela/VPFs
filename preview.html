@@ -209,9 +209,10 @@ function enterDashboard() {
         const initials = bancoInitials(ct.banco);
         const ec = estadoClass(ct.estadoVPF);
         const ac = accesoClass(ct.accesoBanco);
+        const btnData = JSON.stringify({community: c.nombre, cif: c.cif, direccion: c.direccion, iban: ct.iban, banco: ct.banco}).replace(/'/g,'&#39;').replace(/"/g,'&quot;');
         let btn = ct.estadoVPF === 'Completado'
           ? '<span class="btn-tramitar btn-tramitar-done">Completado</span>'
-          : '<button class="btn-tramitar btn-tramitar-primary">Tramitar VPF</button>';
+          : '<button class="btn-tramitar btn-tramitar-primary" onclick="openWizard(&quot;' + encodeURIComponent(JSON.stringify({community: c.nombre, cif: c.cif, direccion: c.direccion, iban: ct.iban, banco: ct.banco})) + '&quot;)">Tramitar VPF</button>';
         html += '<tr><td><div class="banco-cell"><span class="banco-logo" style="background:' + color + '">' + initials + '</span>' + ct.banco + '</div></td>';
         html += '<td><span class="iban">' + ct.iban + '</span></td>';
         html += '<td><span class="acceso ' + ac + '">' + ct.accesoBanco + '</span></td>';
@@ -237,5 +238,159 @@ function goBack() {
   selectedEl.classList.add('hidden');
   btnEl.disabled = true;
 }
+
+/* ===== WIZARD ===== */
+let wizardStep = 1;
+let wizardData = {};
+let wizardAutorizados = [];
+
+function openWizard(encodedData) {
+  const data = JSON.parse(decodeURIComponent(encodedData));
+  wizardData = data;
+  wizardStep = 1;
+
+  const isSabadell = data.banco.toLowerCase().includes('sabadell');
+
+  if (!isSabadell) {
+    document.getElementById('wizard-overlay').innerHTML = '<div class="wiz-modal" style="max-width:480px"><div class="wiz-header"><h2>Proceso no disponible</h2><button class="wiz-close" onclick="closeWizard()">&times;</button></div><div style="padding:32px;text-align:center"><div style="font-size:48px;margin-bottom:16px">🏗️</div><p style="font-size:16px;color:#1e293b;margin-bottom:8px">El proceso de tramitación para <strong>' + data.banco + '</strong> no está disponible todavía.</p><p style="color:#94a3b8;font-size:14px">Próximamente se habilitará el flujo para este banco.</p><button onclick="closeWizard()" style="margin-top:24px;padding:10px 24px;background:#1e40af;color:white;border:none;border-radius:8px;cursor:pointer;font-size:14px">Entendido</button></div></div>';
+    document.getElementById('wizard-overlay').classList.remove('hidden');
+    return;
+  }
+
+  // Mock autorizados for the demo
+  wizardAutorizados = [
+    {nombre: 'María García López', dni: '51234567A', cargo: 'Presidente', tipo: 'ALTA'},
+    {nombre: 'Juan Pérez Ruiz', dni: '48765432B', cargo: 'Vicepresidente', tipo: 'ALTA'},
+    {nombre: 'Carlos Fernández Martín', dni: '09876543C', cargo: 'Presidente anterior', tipo: 'BAJA'}
+  ];
+
+  renderWizard();
+  document.getElementById('wizard-overlay').classList.remove('hidden');
+}
+
+function closeWizard() {
+  document.getElementById('wizard-overlay').classList.add('hidden');
+}
+
+function nextStep() {
+  if (wizardStep < 4) { wizardStep++; renderWizard(); }
+}
+
+function prevStep() {
+  if (wizardStep > 1) { wizardStep--; renderWizard(); }
+}
+
+function renderWizard() {
+  const d = wizardData;
+  const steps = ['Obtener Acta', 'Autorizados', 'Formulario PEC52', 'Envío'];
+
+  let progressHtml = '<div class="wiz-progress">';
+  steps.forEach((s, i) => {
+    const n = i + 1;
+    const cls = n < wizardStep ? 'done' : n === wizardStep ? 'active' : '';
+    progressHtml += '<div class="wiz-step ' + cls + '"><div class="wiz-step-num">' + (n < wizardStep ? '✓' : n) + '</div><div class="wiz-step-label">' + s + '</div></div>';
+    if (i < 3) progressHtml += '<div class="wiz-step-line ' + (n < wizardStep ? 'done' : '') + '"></div>';
+  });
+  progressHtml += '</div>';
+
+  let communityInfo = '<div class="wiz-community"><strong>' + d.community + '</strong><span>CIF: ' + d.cif + '</span><span>' + d.banco + ' · ' + d.iban + '</span></div>';
+
+  let content = '';
+  let footer = '';
+
+  if (wizardStep === 1) {
+    content = '<div class="wiz-section"><h3>📋 Última Junta Ordinaria</h3><div class="wiz-card"><div class="wiz-row"><span class="wiz-label">Tipo:</span><span>Junta General Ordinaria</span></div><div class="wiz-row"><span class="wiz-label">Fecha:</span><span>15 de marzo de 2026</span></div><div class="wiz-row"><span class="wiz-label">Estado:</span><span style="color:#16a34a">✓ Celebrada</span></div></div><h3 style="margin-top:20px">📄 Resumen del Acta</h3><div class="wiz-card" style="background:#f8fafc"><p style="font-size:13px;line-height:1.7;color:#475569">Se aprobaron las cuentas del ejercicio anterior. Se ratificó el presupuesto para el año en curso manteniendo las cuotas actuales. <strong>Se eligieron los nuevos cargos de la comunidad</strong>: Presidente/a y Vicepresidente/a. Se aprobó mantener la administración actual (Ciudadela Property Management S.L.).</p></div><div class="wiz-info">ℹ️ El acta se obtiene automáticamente de Ciudadela. Confirma que la información es correcta antes de continuar.</div></div>';
+    footer = '<div class="wiz-footer"><button class="wiz-btn-secondary" onclick="closeWizard()">Cancelar</button><button class="wiz-btn-primary" onclick="nextStep()">Confirmar Acta →</button></div>';
+  }
+
+  else if (wizardStep === 2) {
+    let rows = '';
+    wizardAutorizados.forEach((a, i) => {
+      const color = a.tipo === 'ALTA' ? '#16a34a' : '#dc2626';
+      const bg = a.tipo === 'ALTA' ? '#dcfce7' : '#fef2f2';
+      rows += '<div class="wiz-auth-row"><div class="wiz-auth-badge" style="background:' + bg + ';color:' + color + '">' + a.tipo + '</div><div class="wiz-auth-fields"><div><label>Nombre completo</label><input type="text" value="' + a.nombre + '" onchange="wizardAutorizados[' + i + '].nombre=this.value" class="wiz-input"></div><div><label>DNI/NIF</label><input type="text" value="' + a.dni + '" onchange="wizardAutorizados[' + i + '].dni=this.value" class="wiz-input" style="width:140px"></div><div><label>Cargo</label><input type="text" value="' + a.cargo + '" onchange="wizardAutorizados[' + i + '].cargo=this.value" class="wiz-input" style="width:160px"></div><button class="wiz-btn-remove" onclick="wizardAutorizados.splice(' + i + ',1);renderWizard()">✕</button></div></div>';
+    });
+    content = '<div class="wiz-section"><h3>👥 Personas Autorizadas</h3><p style="color:#94a3b8;font-size:13px;margin-bottom:16px">Extraídas del acta de la junta. Edita si es necesario.</p>' + rows + '<div style="display:flex;gap:8px;margin-top:12px"><button class="wiz-btn-add" onclick="wizardAutorizados.push({nombre:String(),dni:String(),cargo:String(),tipo:String('ALTA')});renderWizard()">+ Añadir Alta</button><button class="wiz-btn-add" style="background:#fef2f2;color:#dc2626;border-color:#fecaca" onclick="wizardAutorizados.push({nombre:String(),dni:String(),cargo:String(),tipo:String('BAJA')});renderWizard()">+ Añadir Baja</button></div><div class="wiz-info" style="margin-top:16px">⚠️ Asegúrate de que los DNIs son correctos. Sabadell rechazará la solicitud si hay errores.</div></div>';
+    footer = '<div class="wiz-footer"><button class="wiz-btn-secondary" onclick="prevStep()">← Volver</button><button class="wiz-btn-primary" onclick="nextStep()">Confirmar Autorizados →</button></div>';
+  }
+
+  else if (wizardStep === 3) {
+    let altas = wizardAutorizados.filter(a => a.tipo === 'ALTA').map(a => '<tr><td>' + a.nombre + '</td><td>' + a.dni + '</td><td>' + a.cargo + '</td></tr>').join('');
+    let bajas = wizardAutorizados.filter(a => a.tipo === 'BAJA').map(a => '<tr><td>' + a.nombre + '</td><td>' + a.dni + '</td><td>' + a.cargo + '</td></tr>').join('');
+    content = '<div class="wiz-section"><h3>📝 Formulario PEC52 - Banco Sabadell</h3><div class="wiz-pec52"><div class="pec-header">SOLICITUD DE MODIFICACIÓN DE AUTORIZADOS<br><span style="font-size:12px;color:#64748b">Comunidad de Propietarios - Banco Sabadell</span></div><div class="pec-section"><div class="pec-title">DATOS DE LA COMUNIDAD</div><div class="pec-grid"><div><span class="pec-label">Nombre:</span> ' + d.community + '</div><div><span class="pec-label">CIF:</span> ' + d.cif + '</div><div><span class="pec-label">Dirección:</span> ' + d.direccion + '</div><div><span class="pec-label">IBAN:</span> ' + d.iban + '</div></div></div><div class="pec-section"><div class="pec-title">ADMINISTRADOR</div><div class="pec-grid"><div><span class="pec-label">Nombre:</span> Ciudadela Property Management S.L.</div><div><span class="pec-label">CIF:</span> B21835871</div></div></div>' + (altas ? '<div class="pec-section"><div class="pec-title" style="color:#16a34a">ALTAS DE AUTORIZADOS</div><table class="pec-table"><thead><tr><th>Nombre</th><th>DNI</th><th>Cargo</th></tr></thead><tbody>' + altas + '</tbody></table><p style="font-size:11px;color:#94a3b8;margin-top:8px">* Cada persona dada de alta deberá firmar con certificado digital o acudir presencialmente a una sucursal de Banco Sabadell</p></div>' : '') + (bajas ? '<div class="pec-section"><div class="pec-title" style="color:#dc2626">BAJAS DE AUTORIZADOS</div><table class="pec-table"><thead><tr><th>Nombre</th><th>DNI</th><th>Cargo</th></tr></thead><tbody>' + bajas + '</tbody></table></div>' : '') + '<div class="pec-section"><div class="pec-title">FECHA</div><div>' + new Date().toLocaleDateString("es-ES") + '</div></div></div></div>';
+    footer = '<div class="wiz-footer"><button class="wiz-btn-secondary" onclick="prevStep()">← Volver</button><button class="wiz-btn-primary" onclick="nextStep()">Confirmar Formulario →</button></div>';
+  }
+
+  else if (wizardStep === 4) {
+    content = '<div class="wiz-section wiz-send"><h3>📧 Envío de documentación</h3><div class="wiz-card"><div class="wiz-row"><span class="wiz-label">Destinatario:</span><span style="font-family:monospace;font-size:13px">GestionCuentaComunidadPropietarios@bancsabadell.com</span></div><div class="wiz-row"><span class="wiz-label">CC:</span><span style="font-family:monospace;font-size:13px">gestionbancos@ciudadela.eu</span></div><div class="wiz-row"><span class="wiz-label">Asunto:</span><span>' + d.cif + ' - Solicitud modificación autorizados</span></div></div><h4 style="margin-top:20px;margin-bottom:12px">📎 Documentos adjuntos</h4><div class="wiz-attachments"><div class="wiz-attach">📄 Formulario PEC52 - ' + d.community + '.pdf</div><div class="wiz-attach">📄 Acta Junta Ordinaria - ' + d.community + '.pdf</div><div class="wiz-attach">📄 Copia DNI autorizados.pdf</div></div><div class="wiz-info" style="margin-top:20px">✅ Todo listo para enviar. Revisa la información antes de confirmar.</div></div>';
+    footer = '<div class="wiz-footer"><button class="wiz-btn-secondary" onclick="prevStep()">← Volver</button><button class="wiz-btn-primary" style="background:#16a34a" onclick="sendVPF()">✓ Enviar Tramitación</button></div>';
+  }
+
+  document.getElementById('wizard-overlay').innerHTML = '<div class="wiz-modal">' +
+    '<div class="wiz-header"><h2>Tramitar VPF</h2><button class="wiz-close" onclick="closeWizard()">&times;</button></div>' +
+    progressHtml + communityInfo + content + footer + '</div>';
+}
+
+function sendVPF() {
+  document.getElementById('wizard-overlay').innerHTML = '<div class="wiz-modal" style="max-width:480px"><div style="padding:48px;text-align:center"><div style="font-size:64px;margin-bottom:16px">✅</div><h2 style="margin-bottom:8px">Tramitación enviada</h2><p style="color:#94a3b8;margin-bottom:8px">La solicitud de cambio de autorizados para</p><p style="font-weight:600;margin-bottom:4px">' + wizardData.community + '</p><p style="color:#94a3b8;font-size:13px;margin-bottom:24px">se ha enviado correctamente a Banco Sabadell</p><div class="wiz-card" style="text-align:left;margin-bottom:24px"><div class="wiz-row"><span class="wiz-label">Estado:</span><span style="color:#2563eb">En trámite</span></div><div class="wiz-row"><span class="wiz-label">Enviado a:</span><span style="font-size:12px">GestionCuentaComunidadPropietarios@bancsabadell.com</span></div><div class="wiz-row"><span class="wiz-label">Fecha:</span><span>' + new Date().toLocaleDateString("es-ES") + '</span></div></div><button onclick="closeWizard()" style="padding:12px 32px;background:#1e40af;color:white;border:none;border-radius:8px;cursor:pointer;font-size:15px">Volver al Dashboard</button></div></div>';
+}
 </script>
+
+<!-- Wizard Overlay -->
+<div id="wizard-overlay" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:100;display:flex;align-items:center;justify-content:center;padding:16px">
+</div>
+
+<style>
+#wizard-overlay.hidden{display:none}
+.wiz-modal{background:#fff;border-radius:16px;width:100%;max-width:720px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
+.wiz-header{display:flex;justify-content:space-between;align-items:center;padding:20px 24px;border-bottom:1px solid #e2e8f0}
+.wiz-header h2{font-size:18px;font-weight:600}
+.wiz-close{background:none;border:none;font-size:24px;cursor:pointer;color:#94a3b8;padding:4px 8px}
+.wiz-close:hover{color:#1e293b}
+.wiz-progress{display:flex;align-items:center;justify-content:center;padding:20px 24px;gap:0}
+.wiz-step{display:flex;flex-direction:column;align-items:center;gap:4px}
+.wiz-step-num{width:32px;height:32px;border-radius:50%;border:2px solid #e2e8f0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:#94a3b8;background:#fff}
+.wiz-step.active .wiz-step-num{background:#1e40af;color:#fff;border-color:#1e40af}
+.wiz-step.done .wiz-step-num{background:#16a34a;color:#fff;border-color:#16a34a}
+.wiz-step-label{font-size:11px;color:#94a3b8;white-space:nowrap}
+.wiz-step.active .wiz-step-label{color:#1e40af;font-weight:600}
+.wiz-step-line{width:40px;height:2px;background:#e2e8f0;margin:0 4px;margin-bottom:18px}
+.wiz-step-line.done{background:#16a34a}
+.wiz-community{margin:0 24px;padding:12px 16px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px}
+.wiz-community strong{width:100%;font-size:14px}
+.wiz-community span{color:#94a3b8}
+.wiz-section{padding:20px 24px}
+.wiz-section h3{font-size:16px;font-weight:600;margin-bottom:12px}
+.wiz-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:16px}
+.wiz-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f1f5f9;font-size:14px;flex-wrap:wrap;gap:4px}
+.wiz-row:last-child{border-bottom:none}
+.wiz-label{font-weight:500;color:#64748b}
+.wiz-info{padding:12px 16px;border-radius:8px;background:#eff6ff;border:1px solid #bfdbfe;font-size:13px;color:#1e40af;margin-top:12px}
+.wiz-footer{display:flex;justify-content:space-between;padding:16px 24px;border-top:1px solid #e2e8f0}
+.wiz-btn-primary{padding:10px 24px;background:#1e40af;color:white;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:500}
+.wiz-btn-primary:hover{background:#1e3a8a}
+.wiz-btn-secondary{padding:10px 24px;background:#fff;color:#64748b;border:1px solid #e2e8f0;border-radius:8px;cursor:pointer;font-size:14px}
+.wiz-btn-secondary:hover{background:#f8fafc}
+.wiz-auth-row{border:1px solid #e2e8f0;border-radius:10px;padding:12px 16px;margin-bottom:10px}
+.wiz-auth-badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700;margin-bottom:8px}
+.wiz-auth-fields{display:flex;gap:10px;align-items:end;flex-wrap:wrap}
+.wiz-auth-fields label{display:block;font-size:11px;color:#94a3b8;margin-bottom:4px}
+.wiz-input{padding:6px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:13px;outline:none}
+.wiz-input:focus{border-color:#3b82f6}
+.wiz-btn-remove{background:none;border:none;color:#dc2626;cursor:pointer;font-size:16px;padding:4px 8px}
+.wiz-btn-add{padding:8px 16px;background:#dcfce7;color:#16a34a;border:1px solid #bbf7d0;border-radius:8px;cursor:pointer;font-size:13px}
+.wiz-btn-add:hover{background:#bbf7d0}
+.pec-header{text-align:center;font-weight:700;font-size:15px;padding:16px;background:#f8fafc;border-bottom:2px solid #1e40af;border-radius:10px 10px 0 0}
+.wiz-pec52{border:2px solid #e2e8f0;border-radius:10px;overflow:hidden}
+.pec-section{padding:14px 16px;border-bottom:1px solid #e2e8f0}
+.pec-section:last-child{border-bottom:none}
+.pec-title{font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:0.05em;color:#1e40af;margin-bottom:8px}
+.pec-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:13px}
+.pec-label{font-weight:500;color:#64748b}
+.pec-table{width:100%;font-size:13px;border-collapse:collapse}
+.pec-table th{text-align:left;padding:6px 8px;background:#f8fafc;font-weight:500;font-size:11px;text-transform:uppercase;color:#94a3b8}
+.pec-table td{padding:8px;border-top:1px solid #f1f5f9}
+.wiz-attachments{display:flex;flex-direction:column;gap:8px}
+.wiz-attach{padding:10px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;font-size:13px}
+</style>
 </body></html>
